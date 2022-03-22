@@ -204,19 +204,17 @@ function [Ex, Ey, modG, Gx, Gy] = compute_edge_points(modG, Gx, Gy, X, Y)
     Ex = -ones(X*Y, 1, 'double');
     Ey = -ones(X*Y, 1, 'double');
         
-    % explore pixels inside a 2 (3 in matlab as idx starts from 1) pixel margin (so modG[x, y+/-1,1] if
-    % defined)
     for x = 3 : (X-3) 
         for y = 3 : (Y-3)
-            Dx = 0;                                % /* interpolation will be along Dx,Dy */
-            Dy = 0;                                % /*   which will be selected below    */
-            mod = double( modG(x+(y*X)) );         % /* modG at pixel              */
-            L =   double( modG(x-1+(y*X)) );       % /* modG at pixel on the left  */
-            R =   double( modG(x+1+(y*X)) );       % /* modG at pixel on the right */
-            U =   double( modG(x+((y+1)*X)) );     % /* modG at pixel up           */
-            D =   double( modG(x+((y-1)*X)) );     % /* modG at pixel below        */
-            gx =  double( abs(Gx(x+(y*X))) );      % /* absolute value of Gx */
-            gy =  double( abs(Gy(x+(y*X))) );      % /* absolute value of Gy */    
+            Dx = 0;                               
+            Dy = 0;                                
+            mod = double( modG(x+(y*X)) );         
+            L =   double( modG(x-1+(y*X)) );       
+            R =   double( modG(x+1+(y*X)) );       
+            U =   double( modG(x+((y+1)*X)) );     
+            D =   double( modG(x+((y-1)*X)) );    
+            gx =  double( abs(Gx(x+(y*X))) );      
+            gy =  double( abs(Gy(x+(y*X))) );          
     
             if  greater(mod,L) && ~greater(R,mod) && gx >= gy
                 Dx = 1;   
