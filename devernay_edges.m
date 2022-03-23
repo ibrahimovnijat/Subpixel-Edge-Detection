@@ -1,4 +1,7 @@
-function [x, y] = devernay_edges(image, X, Y, sigma, high_threshold, low_threshold)
+function [x, y] = devernay_edges(image, sigma, high_threshold, low_threshold)
+    image = double(image'); % convert (possibly) uint8 to double    
+    [X,Y] = size(image);
+    image = image(:);
     
     if (sigma == 0)
         [Gx, Gy, modG] = compute_gradient(image,X,Y);
@@ -277,7 +280,6 @@ end
 function out = dist(x1, y1, x2, y2)
     out = sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 end
-
 
 function out = greater(a, b)
     if a <= b
