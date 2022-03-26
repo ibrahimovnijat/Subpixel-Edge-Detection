@@ -32,9 +32,9 @@ class DevernayEdge:
         print("(grayscale) Image size:", [self.img_x,self.img_y])
         self.image = np.ravel(np.array(self.image, dtype=np.float64)).reshape([self.img_x*self.img_y, 1])
         
-        self.Gx   = np.empty([self.img_x*self.img_y, 1])
-        self.Gy   = np.empty([self.img_x*self.img_y, 1])
-        self.modG = np.empty([self.img_x*self.img_y, 1])
+        self.Gx   = np.zeros([self.img_x*self.img_y, 1])
+        self.Gy   = np.zeros([self.img_x*self.img_y, 1])
+        self.modG = np.zeros([self.img_x*self.img_y, 1])
 
         self.Ex = -np.ones((self.img_x*self.img_y, 1), dtype=np.float64)
         self.Ey = -np.ones((self.img_x*self.img_y, 1), dtype=np.float64)
@@ -64,7 +64,7 @@ class DevernayEdge:
         for i in range(0, self.img_x * self.img_y):
             if self.prev_[i] >= 0 or self.next_[i] >= 0:
                 # curve_limits[M] = np.int32(N) 
-                curve_limits.insert(M, np.int32(N))
+                # curve_limits.insert(M, np.int32(N))
                 M += 1
 
                 k = i 
@@ -77,8 +77,10 @@ class DevernayEdge:
                 while True:
                     # self.edges_x[N] = self.Ex[k]
                     # self.edges_y[N] = self.Ey[k]
-                    self.edges_x.insert(N, self.Ex[k])
-                    self.edges_y.insert(N, self.Ey[k])
+                    # self.edges_x.insert(N, self.Ex[k])
+                    # self.edges_y.insert(N, self.Ey[k])
+                    self.edges_x.append(self.Ex[k])
+                    self.edges_y.append(self.Ey[k])
 
                     N += 1
                     n = self.next_[k]
@@ -89,7 +91,7 @@ class DevernayEdge:
                         break
         
         # curve_limits[M] = np.int32(N) 
-        curve_limits.insert(M, np.int32(N))
+        # curve_limits.insert(M, np.int32(N))
 
 
                     
@@ -136,7 +138,7 @@ class DevernayEdge:
                         if alt < 0 or self.chain(np.int32(alt), np.int32(bck)) > bck_s:
                             if alt >= 0:
                                 self.prev_[alt] = -1 
-                            self.next_[bck] = -1 
+                            self.next_[bck] = from_ 
                         
                             if self.prev_[from_] >= 0:
                                 self.next_[np.int32(self.prev_[from_])] = -1 
@@ -248,9 +250,9 @@ class DevernayEdge:
             return 0.0
         
         if (self.Gy[from_] * dx - self.Gx[from_] * dy) >= 0.0:
-            return  np.float64(1.0 / dist(self.Ex[from_], self.Ey[from_], self.Ex[to_], self.Ey[from_]))
+            return  np.float64(1.0 / dist(self.Ex[from_], self.Ey[from_], self.Ex[to_], self.Ey[to_]))
         else:
-            return np.float64(-1.0 / dist(self.Ex[from_], self.Ey[from_], self.Ex[to_], self.Ey[from_]))
+            return np.float64(-1.0 / dist(self.Ex[from_], self.Ey[from_], self.Ex[to_], self.Ey[to_]))
         
 
 

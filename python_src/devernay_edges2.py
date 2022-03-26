@@ -46,20 +46,20 @@ class DevernayEdge:
     def compute_gradient(self):
         for x in range(1, self.img_x-1):
             for y in range(1, self.img_y-1):
-                self.Gx[x+y*self.img_x]   = np.float64(self.image_vec[(x+1)+y*self.img_x] - self.image_vec[(x-1)+y*self.img_x])
-                self.Gy[x+y*self.img_x]   = np.float64(self.image_vec[x+(y+1)*self.img_x] - self.image_vec[x+(y-1)*self.img_x])
-                self.modG[x+y*self.img_x] = np.float64(np.sqrt(self.Gx[x+y*self.img_x] * self.Gx[x+y*self.img_x] + self.Gy[x+y*self.img_x] * self.Gy[x+y*self.img_x]))
-
+                self.Gx[x+y*self.img_x]   = np.float64(self.image_vec[(x+1)+(y*self.img_x)] - self.image_vec[(x-1)+(y*self.img_x)])
+                self.Gy[x+y*self.img_x]   = np.float64(self.image_vec[x+((y+1)*self.img_x)] - self.image_vec[x+((y-1)*self.img_x)])
+                self.modG[x+y*self.img_x] = np.float64(np.sqrt(self.Gx[x+(y*self.img_x)] * self.Gx[x+(y*self.img_x)] + self.Gy[x+(y*self.img_x)] * self.Gy[x+(y*self.img_x)]))
 
 
     def list_chained_edge_points(self):
         for i in range(0, self.img_x * self.img_y):
             if self.prev_[i] >= 0 or self.next_[i] >= 0:
-                k = i 
+                k = i
                 n = self.prev_[k]
                 while n >= 0 and n != i:
                     k = n 
                     n = np.squeeze(self.prev_[k])
+                    
 
                 while True:
                     self.edges_x.append(np.squeeze(self.Ex[k]))
@@ -81,8 +81,8 @@ class DevernayEdge:
         
         for x in range(2, self.img_x-2):
             for y in range(2, self.img_x-2):
-                if self.Ex[x + y * self.img_x] >= 0.0 and self.Ey[x + y * self.img_x] >= 0.0:
-                    from_ = x + y * self.img_x
+                if self.Ex[x + (y * self.img_x)] >= 0.0 and self.Ey[x + (y * self.img_x)] >= 0.0:
+                    from_ = np.int32(x + y * self.img_x)
                     fwd_s = 0.0
                     bck_s = 0.0
                     fwd = -1 
@@ -100,7 +100,7 @@ class DevernayEdge:
                             if s < bck_s:
                                 bck_s = s
                                 bck = to_ 
-                            
+
                     if fwd >= 0 and self.next_[from_] != fwd:
                         alt = self.prev_[fwd]
                         if alt < 0 or self.chain(alt, fwd) < fwd_s:
@@ -133,12 +133,12 @@ class DevernayEdge:
         valid = np.full((self.img_x*self.img_y, 1), False)
 
         for i in range(0, self.img_x*self.img_y):
-            if (self.prev_[i] >= 0 or self.next_[i] >= 0) and (not valid[i]) and self.modG[i] >= self.high_thresh:
+            if (self.prev_[i] >= 0 or self.next_[i] >= 0) and not valid[i] and self.modG[i] >= self.high_thresh:
                 valid[i] = True
 
                 j = i
                 k = self.next_[j]
-                while j >= 0 and k >= 0 and (not valid[k]):
+                while j >= 0 and k >= 0 and not valid[k]:
                     if self.modG[k] < self.low_thresh:
                         self.next_[j] = -1 
                         self.prev_[k] = -1
@@ -151,7 +151,7 @@ class DevernayEdge:
                     
                 j = i 
                 k = self.prev_[j]
-                while j >= 0 and k >= 0 and (not valid[k]):
+                while j >= 0 and k >= 0 and not valid[k]:
                     if self.modG[k] < self.low_thresh:
                         self.prev_[j] = -1 
                         self.prev_[k] = -1 
@@ -163,10 +163,9 @@ class DevernayEdge:
 
 
         for i in range(0, self.img_x * self.img_y):
-            if (self.prev_[i] >= 0 or self.next_[i] >= 0) and (not valid[i]):
+            if (self.prev_[i] >= 0 or self.next_[i] >= 0) and not valid[i]:
                 self.prev_[i] = -1 
                 self.next_[i] = -1 
-
 
 
     def compute_edge_points(self):
@@ -179,28 +178,27 @@ class DevernayEdge:
                 Dx = 0
                 Dy = 0
 
-                mod = self.modG[x+y*self.img_x]
-                L =   self.modG[x-1+y*self.img_x]
-                R =   self.modG[x+1+y*self.img_x]
-                U =   self.modG[x+(y+1)*self.img_x]
-                D =   self.modG[x+(y-1)*self.img_x]
-                gx =  np.fabs(self.Gx[x+y*self.img_x])
-                gy =  np.fabs(self.Gy[x+y*self.img_x])
+                mod = self.modG[x+(y*self.img_x)]
+                L   = self.modG[x-1+(y*self.img_x)]
+                R   = self.modG[x+1+(y*self.img_x)]
+                U   = self.modG[x+((y+1)*self.img_x)]
+                D   = self.modG[x+((y-1)*self.img_x)]
+                gx  = np.fabs(self.Gx[x+(y*self.img_x)])
+                gy  = np.fabs(self.Gy[x+(y*self.img_x)])
 
-                if greater(mod, L) and (not greater(R, mod)) and gx >= gy:
+                if greater(mod, L) and not greater(R, mod) and gx >= gy:
                     Dx = 1
-                elif greater(mod,D) and (not greater(U, mod)) and gx <= gy:
+                elif greater(mod,D) and not greater(U, mod) and gx <= gy:
                     Dy = 1
                 
                 if Dx > 0 or Dy > 0:
-                    a = self.modG[x - Dx + (y-Dy) * self.img_x]
-                    b = self.modG[x + y * self.img_x]
-                    c = self.modG[x + Dx + (y+Dy) * self.img_x]
+                    a = self.modG[x - Dx + ((y-Dy) * self.img_x)]
+                    b = self.modG[x + (y * self.img_x)]
+                    c = self.modG[x + Dx + ((y+Dy) * self.img_x)]
                     offset = 0.5 * (a-c) / (a-b-b+c)
 
-                    self.Ex[x+y*self.img_x] = x + offset * Dx
-                    self.Ey[x+y*self.img_x] = y + offset * Dy
-
+                    self.Ex[x+(y*self.img_x)] = x + (offset * Dx)
+                    self.Ey[x+(y*self.img_x)] = y + (offset * Dy)
 
 
     def chain(self, from_, to_):
@@ -281,13 +279,9 @@ def main():
     plt.title("Devernay Edge Detection")
     plt.imshow(np.array(image_rgb))
     plt.scatter(edges_x, edges_y, color="magenta", marker=".", linewidth=.1)
-    
     # plt.figure(2)
-    # plt.imshow(image_binary)
-    
+    # plt.imshow(image_binary)    
     plt.show()
-
-
 
 
 if __name__ == "__main__": main()
