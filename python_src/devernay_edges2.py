@@ -46,9 +46,9 @@ class DevernayEdge:
     def compute_gradient(self):
         for x in range(1, self.img_x-1):
             for y in range(1, self.img_y-1):
-                self.Gx[x+y*self.img_x]   = np.float64(self.image_vec[(x+1)+(y*self.img_x)] - self.image_vec[(x-1)+(y*self.img_x)])
-                self.Gy[x+y*self.img_x]   = np.float64(self.image_vec[x+((y+1)*self.img_x)] - self.image_vec[x+((y-1)*self.img_x)])
-                self.modG[x+y*self.img_x] = np.float64(np.sqrt(self.Gx[x+(y*self.img_x)] * self.Gx[x+(y*self.img_x)] + self.Gy[x+(y*self.img_x)] * self.Gy[x+(y*self.img_x)]))
+                self.Gx[x+(y*self.img_x)]   = self.image_vec[(x+1)+(y*self.img_x)] - self.image_vec[(x-1)+(y*self.img_x)]
+                self.Gy[x+(y*self.img_x)]   = self.image_vec[x+((y+1)*self.img_x)] - self.image_vec[x+((y-1)*self.img_x)]
+                self.modG[x+(y*self.img_x)] = np.sqrt(self.Gx[x+(y*self.img_x)] * self.Gx[x+(y*self.img_x)] + self.Gy[x+(y*self.img_x)] * self.Gy[x+(y*self.img_x)])
 
 
     def list_chained_edge_points(self):
@@ -59,7 +59,6 @@ class DevernayEdge:
                 while n >= 0 and n != i:
                     k = n 
                     n = np.squeeze(self.prev_[k])
-                    
 
                 while True:
                     self.edges_x.append(np.squeeze(self.Ex[k]))
@@ -269,11 +268,14 @@ def main():
     image_rgb = Image.open("cat.jpg")    
     image_binary = Image.open("binary_cat_image.jpg")
 
+    time_start = time.time()
     devernayEdge = DevernayEdge(image_binary, sigma, high_treshold, low_threshold)
     [edges_x, edges_y] = devernayEdge.detect_edges()
-
-    print("edges_x len:", len(edges_x))
-    print("edges_y len:", len(edges_y))
+    time_stop = time.time()
+    
+    print(f"Elapsed time: {(time_stop-time_start):.2f} seconds")
+    print(f"edges_x len: {len(edges_x)}")
+    print(f"edges_y len: {len(edges_y)}")
 
     plt.figure(1)
     plt.title("Devernay Edge Detection")
