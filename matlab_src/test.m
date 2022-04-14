@@ -12,13 +12,11 @@ low_thresh  = 0.0;
 
 %dog
 % img_rgb = imread('dog.jpg');
-% img_gray = rgb2gray(img_rgb);
-% img = img_gray;
-% img(img_gray>250) = 255;
-% img(img_gray<250) = 0;
 
 %cat 
 img_rgb = imread('cat.jpg');
+
+% convert to binary image
 img_gray = rgb2gray(img_rgb);
 img = img_gray;
 img(img_gray>250) = 255;
