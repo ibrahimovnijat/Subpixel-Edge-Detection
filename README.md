@@ -10,3 +10,13 @@ Python implementation depends on the following libraries:
 - numpy
 - matplotlib
 
+
+### Result
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ibrahimovnijat/Subpixel-Edge-Detection/main/matlab_src/result2.jpg" width="420" height=350>
+  
+<img src="https://raw.githubusercontent.com/ibrahimovnijat/Subpixel-Edge-Detection/main/matlab_src/result.jpg" width="440" height=350>
+</p>
+
+
