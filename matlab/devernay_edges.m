@@ -12,14 +12,10 @@ function [x, y] = devernay_edges(image, sigma, high_threshold, low_threshold)
     end
 
     [Ex, Ey, modG, Gx, Gy] = compute_edge_points(modG, Gx, Gy, X,Y);
-
     [next, prev, Ex, Ey] = chain_edge_points(Ex, Ey, Gx, Gy, X,Y);
-    
     [next, prev] = thresholds_with_hysteresis(next, prev, modG, X,Y, high_threshold, low_threshold);
-    
     [x,y,~,~] = list_chained_edge_points(next, prev, Ex, Ey, X,Y);
 end
-
 
 function [Gx, Gy, modG] = compute_gradient(img, X,Y)
     img_vec = img;
@@ -37,7 +33,6 @@ function [Gx, Gy, modG] = compute_gradient(img, X,Y)
 end
 
 function [x, y, curve_limits, M] = list_chained_edge_points(next, prev, Ex, Ey, X, Y)
-        
     N = 1;
     M = 1;
     x =[];
@@ -47,7 +42,6 @@ function [x, y, curve_limits, M] = list_chained_edge_points(next, prev, Ex, Ey, 
        if prev(i) >= 0 || next(i) >= 0
            curve_limits(M) = int32(N);
            M = M + 1;
-
            k=i;
            n=prev(k);
            while (n>=0 && n ~= i)
@@ -59,9 +53,7 @@ function [x, y, curve_limits, M] = list_chained_edge_points(next, prev, Ex, Ey, 
                x(N) = double(Ex(k));
                y(N) = double(Ey(k));
                N = N + 1;
-
                n= next(k);
-               
                next(k) = -1;
                prev(k) = -1;               
                k = n;
@@ -74,9 +66,7 @@ function [x, y, curve_limits, M] = list_chained_edge_points(next, prev, Ex, Ey, 
     curve_limits(M) = int32(N);
 end
 
-
 function [next, prev, Ex, Ey] = chain_edge_points(Ex, Ey, Gx, Gy, X, Y)
-    
     if isempty(Ex) || isempty(Ey) || isempty(Gx) || isempty(Gy) 
         error('chain_edge_points: invalid input');
         return;
@@ -88,7 +78,6 @@ function [next, prev, Ex, Ey] = chain_edge_points(Ex, Ey, Gx, Gy, X, Y)
     for x = 3 : (X-3)
         for y = 3 : (Y-3)
             if Ex(x+(y*X)) >= 0.0 && Ey(x+(y*X)) >= 0.0  
-                
                 from = int32(x + y * X);    
                 fwd_s = double(0.0);         
                 bck_s = double(0.0);        
@@ -146,16 +135,13 @@ function [next, prev, Ex, Ey] = chain_edge_points(Ex, Ey, Gx, Gy, X, Y)
     end
 end
 
-
 function [next, prev] = thresholds_with_hysteresis(next, prev, modG, X,Y, th_h, th_l)
-    
     if isempty(modG) || isempty(next) || isempty(prev)
         error('threshold_with_hysteresis: invalid input');
         return;
     end
     
     valid = false(X*Y, 1);
-    
     for i = 1 : X*Y
        if (prev(i) >= 0 || next(i) >= 0) && ~valid(i) && modG(i) >= th_h
           valid(i) = true;
@@ -196,9 +182,7 @@ function [next, prev] = thresholds_with_hysteresis(next, prev, modG, X,Y, th_h, 
     end
 end
 
-
 function [Ex, Ey, modG, Gx, Gy] = compute_edge_points(modG, Gx, Gy, X, Y)
-    
     if isempty(modG) || isempty(Gx) || isempty(Gy)
         error('compute_edge_points: invalid input');
         return;
@@ -239,9 +223,7 @@ function [Ex, Ey, modG, Gx, Gy] = compute_edge_points(modG, Gx, Gy, X, Y)
     end
 end
 
-
 function out = chain(from, to, Ex, Ey, Gx, Gy, X, Y)
-    
     if isempty(Gx) || isempty(Gy) || isempty(Ex) || isempty(Ey)
         error('chain: invalid input');
         return;
@@ -275,7 +257,6 @@ function out = chain(from, to, Ex, Ey, Gx, Gy, X, Y)
         out = double(-1.0 / dist(Ex(from), Ey(from), Ex(to), Ey(to)));  % /* backward chaining */
     end
 end
-
 
 function out = dist(x1, y1, x2, y2)
     out = sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
