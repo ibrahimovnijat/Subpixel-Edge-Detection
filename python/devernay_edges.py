@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import ImageFilter
+from PIL import Image, ImageFilter
 import time
 
 
@@ -17,9 +17,10 @@ def greater(a, b):
 
 
 class DevernayEdges:
-    """Class for performing Devernay edge detection on an image.
+    """Performs sub-pixel Devernay edge detection on a binary image.
     """
-    def __init__(self, image, sigma=0.0, high_thresh=0.0, low_thresh=0.0):
+    def __init__(self, image: Image, sigma: float = 0.0,
+                 high_thresh: float = 0.0, low_thresh: float = 0.0) -> None:
         self.sigma = sigma
         self.high_thresh = high_thresh
         self.low_thresh = low_thresh
@@ -44,7 +45,7 @@ class DevernayEdges:
         self.edges_x = []
         self.edges_y = []
 
-    def compute_gradient(self):
+    def compute_gradient(self) -> None:
         for x in range(1, self.img_x - 1):
             for y in range(1, self.img_y - 1):
                 self.Gx[x + (y * self.img_x)] = self.image_vec[
@@ -60,7 +61,7 @@ class DevernayEdges:
                     self.Gy[x + (y * self.img_x)] * self.Gy[x +
                                                             (y * self.img_x)])
 
-    def list_chained_edge_points(self):
+    def list_chained_edge_points(self) -> None:
         for i in range(0, self.img_x * self.img_y):
             if self.prev_[i] >= 0 or self.next_[i] >= 0:
                 k = i
@@ -80,7 +81,7 @@ class DevernayEdges:
                     if k < 0:
                         break
 
-    def chain_edge_points(self):
+    def chain_edge_points(self) -> None:
         for x in range(2, self.img_x - 2):
             for y in range(2, self.img_y - 2):
                 if self.Ex[x + (y * self.img_x)] >= 0.0 and self.Ey[
@@ -126,7 +127,7 @@ class DevernayEdges:
                                 self.next_[self.prev_[from_]] = -1
                             self.prev_[from_] = bck
 
-    def thresholds_with_hysteresis(self):
+    def thresholds_with_hysteresis(self) -> None:
         valid = np.full((self.img_x * self.img_y, 1), False)
 
         for i in range(0, self.img_x * self.img_y):
@@ -163,7 +164,7 @@ class DevernayEdges:
                 self.prev_[i] = -1
                 self.next_[i] = -1
 
-    def compute_edge_points(self):
+    def compute_edge_points(self) -> None:
         for x in range(2, self.img_x - 2):
             for y in range(2, self.img_y - 2):
                 Dx = 0
@@ -191,7 +192,7 @@ class DevernayEdges:
                     self.Ex[x + (y * self.img_x)] = x + (offset * Dx)
                     self.Ey[x + (y * self.img_x)] = y + (offset * Dy)
 
-    def chain(self, from_, to_):
+    def chain(self, from_, to_) -> float:
         if from_ < 0 or to_ < 0 or from_ >= (
                 self.img_x * self.img_y) or to_ >= (self.img_x * self.img_y):
             print("chain: one of the points is out of the image")
@@ -218,7 +219,7 @@ class DevernayEdges:
             return -1.0 / dist(self.Ex[from_], self.Ey[from_], self.Ex[to_],
                                self.Ey[to_])
 
-    def run(self):
+    def run(self) -> tuple[list[float], list[float]]:
         if self.sigma != 0.0:
             self.image_filtered =\
                 self.image.filter(ImageFilter.GaussianBlur(radius=self.sigma))
@@ -226,14 +227,12 @@ class DevernayEdges:
                 np.ravel(np.array(self.image_filtered, dtype=np.float64)).reshape([self.img_x * self.img_y, 1])
 
         self.compute_gradient()
-
         self.compute_edge_points()
         self.chain_edge_points()
         self.thresholds_with_hysteresis()
         self.list_chained_edge_points()
 
         if len(self.edges_x) != len(self.edges_y):
-            print("detect edges: size of x and y edges mismatch")
-            return
+            raise ValueError("Size of detected x and y edges mismatch")
 
-        return [self.edges_x, self.edges_y]
+        return self.edges_x, self.edges_y

@@ -11,7 +11,7 @@ if __name__ == "__main__":
     image_rgb_gray = image_rgb.convert('L')
     image_binary = image_rgb_gray.point(lambda x: 0 if x < 240 else 255, '1')
 
-    [edges_x, edges_y] = DevernayEdges(image_binary, sigma, high_treshold, low_threshold).run()
+    edges_x, edges_y = DevernayEdges(image_binary, sigma, high_treshold, low_threshold).run()
 
     plt.figure(1)
     plt.title("Devernay Edge Detection")
