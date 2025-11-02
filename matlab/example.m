@@ -3,17 +3,15 @@ close all;
 clc;
 
 %% hyper params
-
 sigma       = 3.0;       
 high_thresh = 0.0;    % default H and L = 0
 low_thresh  = 0.0;
 
 %% read images
-
-%dog
+%dog image
 % img_rgb = imread('dog.jpg');
 
-%cat 
+%cat image
 img_rgb = imread('cat.jpg');
 
 % convert to binary image
