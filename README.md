@@ -5,7 +5,7 @@ Sample MATLAB and Python implementation of Canny-Devernay subpixel edge detectio
 
 
 ### Result 
-<img src="https://raw.githubusercontent.com/ibrahimovnijat/Subpixel-Edge-Detection/main/matlab_src/result.jpg" width="420" height=350>
+<img src="https://raw.githubusercontent.com/ibrahimovnijat/Subpixel-Edge-Detection/main/matlab/result.jpg" width="420" height=350>
 </p>
 
 
