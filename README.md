@@ -4,11 +4,7 @@ Sample MATLAB and Python implementation of Canny-Devernay subpixel edge detectio
 <a href="https://www.ipol.im/pub/art/2017/216/" target="_blank">Here</a>, is the link to the paper and original C code. 
 
 
-### Result
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/ibrahimovnijat/Subpixel-Edge-Detection/main/matlab_src/result2.jpg" width="420" height=350>
-  
+### Result 
 <img src="https://raw.githubusercontent.com/ibrahimovnijat/Subpixel-Edge-Detection/main/matlab_src/result.jpg" width="420" height=350>
 </p>
 
