@@ -4,13 +4,6 @@ Sample MATLAB and Python implementation of Canny-Devernay subpixel edge detectio
 <a href="https://www.ipol.im/pub/art/2017/216/" target="_blank">Here</a>, is the link to the paper and original C code. 
 
 
-Python implementation depends on the following libraries:
-
-- PIL
-- numpy
-- matplotlib
-
-
 ### Result
 
 <p align="center">
